@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GRID-OS | Central Command</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* ================= NAV ================= */
+        nav { display:flex; justify-content:flex-end; padding:2rem 6%; }
+        nav a { color:#ddd; text-decoration:none; margin-left:2rem; font-weight:500; }
+        nav a:hover { color:#fff; }
+        .btn-contact { border:2px solid white; padding:6px 20px; border-radius:4px; font-weight:600; }
+        /* =================    ================= */
+
+        :root {
+            --bg: #050a10; --panel: #0f1724; --border: #1e293b;
+            --accent: #00e5ff; --text: #e2e8f0; --dim: #64748b;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
+        body { background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; }
+
+        /* HEADER */
+        .header { height: 60px; background: rgba(15,23,36,0.9); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; }
+        .brand { font-size: 1.2rem; font-weight: 800; color: #fff; letter-spacing: 1px; }
+        .brand span { color: var(--accent); }
+
+        /* LAYOUT */
+        .layout { display: flex; flex: 1; height: calc(100vh - 60px); }
+
+        /* SIDEBAR */
+        .sidebar { width: 300px; background: var(--panel); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .cam-card { background: #141c2f; border: 1px solid var(--border); padding: 12px; border-radius: 4px; }
+        .cam-name { font-weight: 700; color: #fff; display: block; }
+        .cam-status { font-size: 0.8rem; color: var(--dim); display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+        .dot { width: 6px; height: 6px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 5px #00ff9d; }
+
+        .btn-scan {
+            background: #ff2a6d; color: white; border: none; padding: 12px; 
+            font-weight: 700; border-radius: 4px; cursor: pointer; text-align: center;
+            text-decoration: none; text-transform: uppercase; margin-top: auto;
+        }
+        .btn-scan:hover { background: #d91e55; }
+
+        /* MAIN CONTENT */
+        .main-content { flex: 1; padding: 25px; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* SEARCH BAR */
+        .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-input { flex: 1; background: #0b121d; border: 1px solid var(--border); padding: 12px; color: white; border-radius: 4px; outline: none; }
+        .search-btn { background: var(--accent); color: black; font-weight: bold; border: none; padding: 0 20px; border-radius: 4px; cursor: pointer; }
+        .clear-btn { background: var(--panel); color: var(--dim); text-decoration: none; padding: 12px; border: 1px solid var(--border); border-radius: 4px; }
+
+        /* TABLE */
+        .table-wrap { flex: 1; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #162032; position: sticky; top: 0; }
+        th { text-align: left; padding: 12px 20px; color: var(--dim); font-size: 0.75rem; text-transform: uppercase; }
+        td { padding: 12px 20px; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; }
+        .plate { color: #fff; font-weight: 700; }
+        .conf { color: var(--accent); }
+
+        /* RESULTS GRID (Map Cards) */
+        .results-grid { display: flex; flex-direction: column; gap: 20px; overflow-y: auto; padding-right: 10px; }
+        .result-card { display: flex; background: #141c2f; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; min-height: 200px; }
+        .result-info { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+        .result-plate { font-size: 2rem; font-weight: 800; color: #fff; letter-spacing: 2px; font-family: 'JetBrains Mono'; }
+        .result-detail { color: var(--dim); font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
+        .icon { color: var(--accent); width: 20px; text-align: center; }
+        .result-map { flex: 1; min-width: 300px; border-left: 1px solid var(--border); background: #000; }
+        iframe { width: 100%; height: 100%; border: 0; filter: invert(90%) hue-rotate(180deg); }
+
+        /* ALERT */
+        .alert { background: rgba(0, 229, 255, 0.1); border: 1px solid var(--accent); color: var(--accent); padding: 15px; margin-bottom: 20px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+
+<nav>
+    <a href="{% url 'home_page' %}">Home</a>     
+    <a href="{% url 'vehicle_intelligence' %}">Image Scanner</a>     
+    <a href="{% url 'upload_video' %}" style="color:#fff;">Video Analysis</a>     
+    <a href="{% url 'vehicle_search' %}">Database Search</a>
+    <a href="{% url 'dashboard_alias' %}">CCTV Search</a>
+</nav>
+
+
+    <div class="header">
+        <div class="brand">GRID<span>OS</span></div>
+        <div style="font-family:'JetBrains Mono'; font-size:0.8rem; color:var(--accent);">SYSTEM ONLINE</div>
+    </div>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <div style="color:var(--dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; margin-bottom:5px;">
+                Camera Network ({{ stats|length }})
+            </div>
+            
+            {% for cam in stats %}
+            <div class="cam-card">
+                <span class="cam-name">{{ cam.name }}</span>
+                <div class="cam-status"><div class="dot"></div> {{ cam.total_vehicles }} detections</div>
+            </div>
+            {% empty %}
+            <div style="color:var(--dim); text-align:center;">No cameras active</div>
+            {% endfor %}
+
+            <a href="{% url 'trigger_scan' %}" class="btn-scan">⚡ Run System Scan</a>
+        </aside>
+
+        <main class="main-content">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="GET" class="search-bar">
+                <input type="text" name="q" class="search-input" placeholder="Search License Plate (e.g. AK64)..." value="{{ query }}">
+                <button type="submit" class="search-btn">SEARCH</button>
+                {% if query %}
+                <a href="{% url 'dashboard' %}" class="clear-btn">CLEAR</a>
+                {% endif %}
+            </form>
+
+            <h3 style="margin-bottom:15px; font-weight:400;">{{ table_title }}</h3>
+
+            {% if query %}
+                <div class="results-grid">
+                    {% for log in detections %}
+                    <div class="result-card">
+                        <div class="result-info">
+                            <div class="result-plate">{{ log.license_plate }}</div>
+                            <div class="result-detail"><span class="icon">📷</span> {{ log.camera.camera_name }}</div>
+                            <div class="result-detail"><span class="icon">📍</span> {{ log.location_name }}</div>
+                            <div class="result-detail"><span class="icon">🕒</span> {{ log.timestamp }}</div>
+                            <div class="result-detail"><span class="icon">🎯</span> Confidence: {{ log.confidence|floatformat:2 }}%</div>
+                        </div>
+                        <div class="result-map">
+                            <iframe 
+                                loading="lazy"
+                                allowfullscreen
+                                src="https://maps.google.com/maps?q={{ log.lat }},{{ log.lng }}&hl=en&z=15&output=embed">
+                            </iframe>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div style="text-align:center; padding:50px; color:var(--dim); border:1px dashed var(--border);">
+                        No sighting record found for "{{ query }}"
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Source Feed</th>
+                                <th>License Plate</th>
+                                <th>Confidence</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in detections %}
+                            <tr>
+                                <td style="color:var(--dim);">{{ log.timestamp|date:"H:i:s" }}</td>
+                                <td>{{ log.camera.camera_name }}</td>
+                                <td class="plate">{{ log.license_plate }}</td>
+                                <td class="conf">{{ log.confidence|floatformat:2 }}%</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" style="text-align:center; padding:50px; color:var(--dim);">No data found.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+
+</body>
+</html>
